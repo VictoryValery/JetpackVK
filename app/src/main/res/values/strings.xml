@@ -1,3 +1,4 @@
 <resources>
     <string name="app_name">JetpackVK</string>
+    <string name="template_card_text">Creates a CardElevation that will animate between the provided values according to the Material specification for a Card.</string>
 </resources>
