@@ -1,4 +1,8 @@
 <resources>
     <string name="app_name">JetpackVK</string>
     <string name="template_card_text">Creates a CardElevation that will animate between the provided values according to the Material specification for a Card.</string>
+    <string name="navigation_item_main">Главная</string>
+    <string name="navigation_item_favourite">Избранное</string>
+    <string name="navigation_item_profile">Профиль</string>
+    <string name="main_floating_action_button">Floating action button</string>
 </resources>

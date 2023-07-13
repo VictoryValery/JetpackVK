@@ -9,7 +9,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
-import com.victoryvalery.jetpackvk.ui.PostCard
+import com.victoryvalery.jetpackvk.ui.VkNewsMainScreen
 import com.victoryvalery.jetpackvk.ui.theme.JetpackVKTheme
 
 class MainActivity : ComponentActivity() {
@@ -19,7 +19,8 @@ class MainActivity : ComponentActivity() {
             JetpackVKTheme {
                 // A surface container using the 'background' color from the theme
                 Surface(color = MaterialTheme.colorScheme.background) {
-                    PostCard(false)
+//                    PostCard(false)
+                    VkNewsMainScreen()
                 }
             }
         }
