@@ -8,20 +8,34 @@ import kotlinx.coroutines.flow.asStateFlow
 
 class MainViewModel : ViewModel() {
 
-    private val _feedPost = MutableStateFlow(FeedPostItem())
-    val feedPost = _feedPost.asStateFlow()
-
-    fun updateCount(item: StatisticsItem) {
-        val oldStatistics = feedPost.value.publicationStatistics
-        val newStatistics = oldStatistics.toMutableList().apply {
-            replaceAll { oldStatisticsItem ->
-                if (oldStatisticsItem.type == item.type)
-                    oldStatisticsItem.copy(count = oldStatisticsItem.count + 1)
-                else
-                    oldStatisticsItem
-            }
+    private val initList = mutableListOf<FeedPostItem>().apply {
+        repeat(50) {
+            add(FeedPostItem(publicationId = it))
         }
-        _feedPost.value = feedPost.value.copy(publicationStatistics = newStatistics)
     }
 
+    private val _feed = MutableStateFlow(initList)
+    val feed = _feed.asStateFlow()
+
+    fun updateCount(feedPostItem: FeedPostItem, item: StatisticsItem) {
+        _feed.value = _feed.value.toMutableList().apply {
+            replaceAll {
+                if (it == feedPostItem) {
+                    val oldStatistics = feedPostItem.publicationStatistics
+                    val newStatistics = oldStatistics.toMutableList().apply {
+                        apply {
+                            replaceAll { oldStatisticsItem ->
+                                if (oldStatisticsItem.type == item.type)
+                                    oldStatisticsItem.copy(count = oldStatisticsItem.count + 1)
+                                else
+                                    oldStatisticsItem
+                            }
+                        }
+                    }
+                    it.copy(publicationStatistics = newStatistics)
+                } else
+                    it
+            }
+        }
+    }
 }

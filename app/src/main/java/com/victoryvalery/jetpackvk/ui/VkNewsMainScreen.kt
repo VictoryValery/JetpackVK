@@ -2,6 +2,8 @@ package com.victoryvalery.jetpackvk.ui
 
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.NavigationBar
@@ -17,13 +19,14 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import com.victoryvalery.jetpackvk.domain.FeedPostItem
 import com.victoryvalery.jetpackvk.ui.NavigationItem.*
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun VkNewsMainScreen(viewModel: MainViewModel) {
 
-    val feedPost = viewModel.feedPost.collectAsState()
+    val feed = viewModel.feed.collectAsState()
 
     Scaffold(
         bottomBar = {
@@ -44,14 +47,18 @@ fun VkNewsMainScreen(viewModel: MainViewModel) {
             }
         }
     )
-    {
-        PostCard(
-            modifier = Modifier.padding(it),
-            feedPostItem = feedPost.value,
-            onCommentItemClickListener = viewModel::updateCount,
-            onLikeItemClickListener = viewModel::updateCount,
-            onShareItemClickListener = viewModel::updateCount,
-            onViewsItemClickListener = viewModel::updateCount,
-        )
+    { it ->
+        LazyColumn(modifier = Modifier.padding(it)) {
+            items(feed.value, key = { item: FeedPostItem -> item.publicationId }) { feedPostItem: FeedPostItem ->
+                PostCard(
+                    feedPostItem = feedPostItem,
+                    onCommentItemClickListener = { statisticsItem -> viewModel.updateCount(feedPostItem, statisticsItem) },
+                    onLikeItemClickListener = { statisticsItem -> viewModel.updateCount(feedPostItem, statisticsItem) },
+                    onShareItemClickListener = { statisticsItem -> viewModel.updateCount(feedPostItem, statisticsItem) },
+                    onViewsItemClickListener = { statisticsItem -> viewModel.updateCount(feedPostItem, statisticsItem) },
+                )
+            }
+        }
+
     }
 }
