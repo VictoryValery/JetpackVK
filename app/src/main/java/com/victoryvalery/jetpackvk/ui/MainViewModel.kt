@@ -9,13 +9,17 @@ import kotlinx.coroutines.flow.asStateFlow
 class MainViewModel : ViewModel() {
 
     private val initList = mutableListOf<FeedPostItem>().apply {
-        repeat(50) {
+        repeat(8) {
             add(FeedPostItem(publicationId = it))
         }
     }
 
     private val _feed = MutableStateFlow(initList)
     val feed = _feed.asStateFlow()
+
+    fun dismissElement(feedPostItem: FeedPostItem) {
+        _feed.value = _feed.value.toMutableList().apply { remove(feedPostItem) }
+    }
 
     fun updateCount(feedPostItem: FeedPostItem, item: StatisticsItem) {
         _feed.value = _feed.value.toMutableList().apply {

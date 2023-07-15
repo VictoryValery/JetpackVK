@@ -1,32 +1,31 @@
 package com.victoryvalery.jetpackvk.ui
 
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
-import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarItem
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
-import com.victoryvalery.jetpackvk.domain.FeedPostItem
-import com.victoryvalery.jetpackvk.ui.NavigationItem.*
+import androidx.navigation.compose.currentBackStackEntryAsState
+import androidx.navigation.compose.rememberNavController
+import com.victoryvalery.jetpackvk.navigation.AppNavGraph
+import com.victoryvalery.jetpackvk.navigation.Screen
+import com.victoryvalery.jetpackvk.ui.NavigationItem.Favourite
+import com.victoryvalery.jetpackvk.ui.NavigationItem.Home
+import com.victoryvalery.jetpackvk.ui.NavigationItem.Profile
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun VkNewsMainScreen(viewModel: MainViewModel) {
 
-    val feed = viewModel.feed.collectAsState()
+    val navHostController = rememberNavController()
 
     Scaffold(
         bottomBar = {
@@ -34,31 +33,47 @@ fun VkNewsMainScreen(viewModel: MainViewModel) {
                 modifier = Modifier
                     .height(72.dp)
             ) {
-                var selectedItem by remember { mutableStateOf(0) }
+                val navBackStackEntry by navHostController.currentBackStackEntryAsState()
+                val currentRoute = navBackStackEntry?.destination?.route
                 val items = listOf(Home, Favourite, Profile)
-                items.forEachIndexed { index, item ->
+                items.forEach { item ->
                     NavigationBarItem(
                         icon = { Icon(item.icon, contentDescription = stringResource(item.titleResId)) },
                         label = { Text(stringResource(item.titleResId)) },
-                        selected = selectedItem == index,
-                        onClick = { selectedItem = index },
+                        selected = currentRoute == item.screen.route,
+                        onClick = {
+                            navHostController.navigate(item.screen.route) {
+                                launchSingleTop = true //только один фрагмент сверху
+                                restoreState = true //восстановление сохраненного стейта
+                                popUpTo(Screen.NewsFeed.route) {//возврат к основному экрану
+                                    saveState = true
+                                } //сохранение стейта при удалении экрана из бэкстека
+                            }
+                        },
                     )
                 }
             }
         }
     )
-    { it ->
-        LazyColumn(modifier = Modifier.padding(it)) {
-            items(feed.value, key = { item: FeedPostItem -> item.publicationId }) { feedPostItem: FeedPostItem ->
-                PostCard(
-                    feedPostItem = feedPostItem,
-                    onCommentItemClickListener = { statisticsItem -> viewModel.updateCount(feedPostItem, statisticsItem) },
-                    onLikeItemClickListener = { statisticsItem -> viewModel.updateCount(feedPostItem, statisticsItem) },
-                    onShareItemClickListener = { statisticsItem -> viewModel.updateCount(feedPostItem, statisticsItem) },
-                    onViewsItemClickListener = { statisticsItem -> viewModel.updateCount(feedPostItem, statisticsItem) },
-                )
-            }
-        }
-
+    {
+        AppNavGraph(
+            navController = navHostController,
+            homeScreenContent = { HomeScreen(viewModel = viewModel, paddingValues = it) },
+            favouriteScreenContent = { OtherScreen(name = "Favourite") },
+            profileScreenContent = { OtherScreen(name = "Profile") }
+        )
     }
+}
+
+@Composable
+fun OtherScreen(name: String) {
+    val count = rememberSaveable {
+        mutableStateOf(0)
+    }
+    Text(
+        modifier = Modifier.clickable(enabled = true) {
+            count.value++
+        },
+        text = "$name count: ${count.value}"
+    )
 }

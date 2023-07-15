@@ -55,7 +55,8 @@ fun PostCard(
     Card(
         modifier = modifier
             .fillMaxWidth()
-            .padding(8.dp),
+//            .padding(8.dp)
+        ,
         shape = RoundedCornerShape(5.dp),
         elevation = CardDefaults.cardElevation(1.dp),
         colors = CardDefaults.cardColors(
@@ -71,7 +72,7 @@ fun PostCard(
             PostHeader(feedPostItem)
             Spacer(modifier = Modifier.height(8.dp))
             Text(
-                text = feedPostItem.publicationText,
+                text = feedPostItem.publicationId.toString().plus(feedPostItem.publicationText),
                 style = TextStyle(fontSize = 12.sp, fontFamily = FontFamily.SansSerif)
             )
             Spacer(modifier = Modifier.height(8.dp))
