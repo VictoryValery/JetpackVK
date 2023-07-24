@@ -15,9 +15,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.navigation.compose.currentBackStackEntryAsState
-import androidx.navigation.compose.rememberNavController
 import com.victoryvalery.jetpackvk.navigation.AppNavGraph
-import com.victoryvalery.jetpackvk.navigation.Screen
+import com.victoryvalery.jetpackvk.navigation.rememberNavigationState
 import com.victoryvalery.jetpackvk.ui.NavigationItem.Favourite
 import com.victoryvalery.jetpackvk.ui.NavigationItem.Home
 import com.victoryvalery.jetpackvk.ui.NavigationItem.Profile
@@ -25,7 +24,7 @@ import com.victoryvalery.jetpackvk.ui.NavigationItem.Profile
 @Composable
 fun VkNewsMainScreen(viewModel: MainViewModel) {
 
-    val navHostController = rememberNavController()
+    val navigationState = rememberNavigationState()
 
     Scaffold(
         bottomBar = {
@@ -33,7 +32,11 @@ fun VkNewsMainScreen(viewModel: MainViewModel) {
                 modifier = Modifier
                     .height(72.dp)
             ) {
-                val navBackStackEntry by navHostController.currentBackStackEntryAsState()
+                //стейт хранения текущего открытого экрана - currentBackStackEntryAsState()
+                //если будет открыт другой экран, то и стейт изменится
+                // и произойдёт рекомпозиция необходимых composable функций
+                val navBackStackEntry by navigationState.navHostController.currentBackStackEntryAsState()
+                //название того экрана, который сейчас открыт
                 val currentRoute = navBackStackEntry?.destination?.route
                 val items = listOf(Home, Favourite, Profile)
                 items.forEach { item ->
@@ -42,13 +45,7 @@ fun VkNewsMainScreen(viewModel: MainViewModel) {
                         label = { Text(stringResource(item.titleResId)) },
                         selected = currentRoute == item.screen.route,
                         onClick = {
-                            navHostController.navigate(item.screen.route) {
-                                launchSingleTop = true //только один фрагмент сверху
-                                restoreState = true //восстановление сохраненного стейта
-                                popUpTo(Screen.NewsFeed.route) {//возврат к основному экрану
-                                    saveState = true
-                                } //сохранение стейта при удалении экрана из бэкстека
-                            }
+                            navigationState.navigateTo(item.screen.route)
                         },
                     )
                 }
@@ -57,7 +54,7 @@ fun VkNewsMainScreen(viewModel: MainViewModel) {
     )
     {
         AppNavGraph(
-            navController = navHostController,
+            navController = navigationState.navHostController,
             homeScreenContent = { HomeScreen(viewModel = viewModel, paddingValues = it) },
             favouriteScreenContent = { OtherScreen(name = "Favourite") },
             profileScreenContent = { OtherScreen(name = "Profile") }
