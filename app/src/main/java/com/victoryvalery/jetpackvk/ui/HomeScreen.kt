@@ -15,22 +15,31 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import com.victoryvalery.jetpackvk.domain.FeedPostItem
-import com.victoryvalery.jetpackvk.ui.HomeScreenState.*
+import com.victoryvalery.jetpackvk.ui.NewsFeedScreenState.Initial
+import com.victoryvalery.jetpackvk.ui.NewsFeedScreenState.Posts
 
 @Composable
 fun HomeScreen(
-    viewModel: MainViewModel,
-    paddingValues: PaddingValues
+    paddingValues: PaddingValues,
+    onCommentClickListener: (feedPostItem: FeedPostItem) -> Unit
 ) {
+    //СОЗДАЁМ ВЬЮ МОДЕЛЬ ЛОКАЛЬНО, ИСПОЛЬЗУЯ ЛОКАЛЬНОГО ВЛАДЕЛЬЦА ВЬЮ МОДЕЛИ В ХРАНАЛАЩЕ
+//    val viewModel = ViewModelProvider(LocalViewModelStoreOwner.current!!)[NewsFeedViewModel::class.java]
+
+    //работа расширения по созданию вью модели
+    val viewModel: NewsFeedViewModel = viewModel()
+
     val screenState = viewModel.screenState.collectAsState()
     when (val currentState = screenState.value) {
         is Posts -> {
-            FeedPosts(paddingValues = paddingValues, viewModel = viewModel, feed = currentState.posts)
-        }
-
-        is Comments -> {
-            CommentsScreen(feedPost = currentState.feedPost, comments = currentState.comments)
+            FeedPosts(
+                paddingValues = paddingValues,
+                viewModel = viewModel,
+                feed = currentState.posts,
+                onCommentClickListener = onCommentClickListener
+            )
         }
 
         Initial -> {
@@ -43,8 +52,9 @@ fun HomeScreen(
 @Composable
 private fun FeedPosts(
     paddingValues: PaddingValues,
-    viewModel: MainViewModel,
-    feed: List<FeedPostItem>
+    viewModel: NewsFeedViewModel,
+    feed: List<FeedPostItem>,
+    onCommentClickListener: (feedPostItem: FeedPostItem) -> Unit
 ) {
     LazyColumn(
         modifier = Modifier.padding(paddingValues),
@@ -65,11 +75,12 @@ private fun FeedPosts(
                 dismissContent = {
                     PostCard(
                         feedPostItem = feedPostItem,
-                        onCommentItemClickListener = { statisticsItem ->
-                            viewModel.updateCount(
-                                feedPostItem,
-                                statisticsItem
-                            )
+                        onCommentItemClickListener = {
+//                            viewModel.updateCount(
+//                                feedPostItem,
+//                                statisticsItem
+//                            )
+                            onCommentClickListener(feedPostItem)
                         },
                         onLikeItemClickListener = { statisticsItem -> viewModel.updateCount(feedPostItem, statisticsItem) },
                         onShareItemClickListener = { statisticsItem -> viewModel.updateCount(feedPostItem, statisticsItem) },

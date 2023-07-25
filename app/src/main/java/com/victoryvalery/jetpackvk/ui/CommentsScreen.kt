@@ -20,6 +20,7 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -31,28 +32,32 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.victoryvalery.jetpackvk.domain.FeedPostItem
+import androidx.lifecycle.viewmodel.compose.viewModel
 import com.victoryvalery.jetpackvk.domain.PostComment
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun CommentsScreen(
-    feedPost: FeedPostItem,
-    comments: List<PostComment>
+    onBackPressed: () -> Unit
 ) {
+    val viewModel: CommentsViewModel = viewModel()
+    val screenState = viewModel.commentsState.collectAsState()
+    val currentState = screenState.value
+    if (currentState !is CommentsScreenState.Comments)
+        return
 
     Scaffold(
         topBar = {
             TopAppBar(
                 title = {
                     Text(
-                        "Comments for FeedPost Id: ${feedPost.publicationId}",
+                        "Comments for FeedPost Id: ${currentState.feedPost.publicationId}",
                         maxLines = 1,
                         overflow = TextOverflow.Ellipsis
                     )
                 },
                 navigationIcon = {
-                    IconButton(onClick = { /* doSomething() */ }) {
+                    IconButton(onClick = { onBackPressed() }) {
                         Icon(
                             imageVector = Icons.Filled.ArrowBack,
                             contentDescription = "Localized description"
@@ -68,7 +73,7 @@ fun CommentsScreen(
             contentPadding = PaddingValues(bottom = 80.dp, end = 8.dp, start = 8.dp),
             verticalArrangement = Arrangement.spacedBy(8.dp),
             content = {
-                items(items = comments, key = { pc: PostComment -> pc.id }) {
+                items(items = currentState.comments, key = { pc: PostComment -> pc.id }) {
                     SingleComment(singleComment = it)
                 }
             }
