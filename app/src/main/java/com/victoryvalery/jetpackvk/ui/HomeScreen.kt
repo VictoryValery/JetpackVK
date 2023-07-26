@@ -17,8 +17,9 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.victoryvalery.jetpackvk.domain.FeedPostItem
-import com.victoryvalery.jetpackvk.ui.NewsFeedScreenState.Initial
-import com.victoryvalery.jetpackvk.ui.NewsFeedScreenState.Posts
+import com.victoryvalery.jetpackvk.ui.newsfeed.NewsFeedScreenState.Initial
+import com.victoryvalery.jetpackvk.ui.newsfeed.NewsFeedScreenState.Posts
+import com.victoryvalery.jetpackvk.ui.newsfeed.NewsFeedViewModel
 
 @Composable
 fun HomeScreen(

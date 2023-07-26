@@ -1,4 +1,4 @@
-package com.victoryvalery.jetpackvk.ui
+package com.victoryvalery.jetpackvk.ui.newsfeed
 
 import com.victoryvalery.jetpackvk.domain.FeedPostItem
 

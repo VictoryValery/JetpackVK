@@ -1,4 +1,4 @@
-package com.victoryvalery.jetpackvk.ui
+package com.victoryvalery.jetpackvk.ui.comments
 
 import com.victoryvalery.jetpackvk.domain.FeedPostItem
 import com.victoryvalery.jetpackvk.domain.PostComment

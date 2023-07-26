@@ -8,15 +8,19 @@ import androidx.navigation.compose.composable
 @Composable
 fun AppNavGraph(
     navController: NavHostController,
-    homeScreenContent: @Composable () -> Unit,
+    newsFeedScreenContent: @Composable () -> Unit,
+    commentsScreenContent: @Composable () -> Unit,
     favouriteScreenContent: @Composable () -> Unit,
     profileScreenContent: @Composable () -> Unit,
 ) {
     NavHost(
         navController = navController,
-        startDestination = Screen.NewsFeed.route
+        startDestination = Screen.Home.route
     ) {
-        composable(Screen.NewsFeed.route) { homeScreenContent() }
+        this.homeScreenNavGraph(
+            newsFeedScreenContent = newsFeedScreenContent,
+            commentsScreenContent = commentsScreenContent
+        )
         composable(Screen.Favourite.route) { favouriteScreenContent() }
         composable(Screen.Profile.route) { profileScreenContent() }
     }

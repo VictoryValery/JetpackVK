@@ -1,14 +1,13 @@
-package com.victoryvalery.jetpackvk.ui
+package com.victoryvalery.jetpackvk.ui.newsfeed
 
 import androidx.lifecycle.ViewModel
 import com.victoryvalery.jetpackvk.domain.FeedPostItem
 import com.victoryvalery.jetpackvk.domain.StatisticsItem
-import com.victoryvalery.jetpackvk.ui.NewsFeedScreenState.Posts
+import com.victoryvalery.jetpackvk.ui.newsfeed.NewsFeedScreenState.Posts
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 
 class NewsFeedViewModel : ViewModel() {
-
 
     private val initList = mutableListOf<FeedPostItem>().apply {
         repeat(8) {

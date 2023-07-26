@@ -20,9 +20,11 @@ import androidx.navigation.compose.currentBackStackEntryAsState
 import com.victoryvalery.jetpackvk.domain.FeedPostItem
 import com.victoryvalery.jetpackvk.navigation.AppNavGraph
 import com.victoryvalery.jetpackvk.navigation.rememberNavigationState
-import com.victoryvalery.jetpackvk.ui.NavigationItem.Favourite
-import com.victoryvalery.jetpackvk.ui.NavigationItem.Home
-import com.victoryvalery.jetpackvk.ui.NavigationItem.Profile
+import com.victoryvalery.jetpackvk.navigation.NavigationItem.Favourite
+import com.victoryvalery.jetpackvk.navigation.NavigationItem.Home
+import com.victoryvalery.jetpackvk.navigation.NavigationItem.Profile
+import com.victoryvalery.jetpackvk.navigation.Screen
+import com.victoryvalery.jetpackvk.ui.comments.CommentsScreen
 
 @Composable
 fun VkNewsMainScreen() {
@@ -60,21 +62,25 @@ fun VkNewsMainScreen() {
     {
         AppNavGraph(
             navController = navigationState.navHostController,
-            homeScreenContent = {
+            newsFeedScreenContent = {
                 if (commentsToPost.value == null)
                     HomeScreen(
                         paddingValues = it,
                         onCommentClickListener = {
                             commentsToPost.value = it
+                            // осуществляем переход по вложенному графу навигации
+                            navigationState.navigateTo(Screen.Comments.route)
                         }
                     )
-                else
-                    CommentsScreen {
-                        commentsToPost.value = null
-                    }
             },
             favouriteScreenContent = { OtherScreen(name = "Favourite") },
-            profileScreenContent = { OtherScreen(name = "Profile") }
+            profileScreenContent = { OtherScreen(name = "Profile") },
+            commentsScreenContent = {
+                CommentsScreen(
+                    onBackPressed = { commentsToPost.value = null },
+                    feedPost = commentsToPost.value!!
+                )
+            }
         )
     }
 }

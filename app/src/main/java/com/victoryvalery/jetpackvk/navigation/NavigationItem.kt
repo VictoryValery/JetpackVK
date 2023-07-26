@@ -1,4 +1,4 @@
-package com.victoryvalery.jetpackvk.ui
+package com.victoryvalery.jetpackvk.navigation
 
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.Favorite
@@ -6,7 +6,6 @@ import androidx.compose.material.icons.outlined.Home
 import androidx.compose.material.icons.outlined.Person
 import androidx.compose.ui.graphics.vector.ImageVector
 import com.victoryvalery.jetpackvk.R
-import com.victoryvalery.jetpackvk.navigation.Screen
 
 sealed class NavigationItem(
     val screen: Screen,

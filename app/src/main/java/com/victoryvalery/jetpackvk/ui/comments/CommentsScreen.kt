@@ -1,4 +1,4 @@
-package com.victoryvalery.jetpackvk.ui
+package com.victoryvalery.jetpackvk.ui.comments
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
@@ -33,14 +33,18 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
+import com.victoryvalery.jetpackvk.domain.FeedPostItem
 import com.victoryvalery.jetpackvk.domain.PostComment
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun CommentsScreen(
-    onBackPressed: () -> Unit
+    onBackPressed: () -> Unit,
+    feedPost: FeedPostItem
 ) {
-    val viewModel: CommentsViewModel = viewModel()
+    val viewModel: CommentsViewModel = viewModel(
+        factory = CommentsViewModelFactory(feedPost)
+    )
     val screenState = viewModel.commentsState.collectAsState()
     val currentState = screenState.value
     if (currentState !is CommentsScreenState.Comments)
